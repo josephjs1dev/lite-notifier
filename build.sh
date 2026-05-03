@@ -28,8 +28,8 @@ swiftc "$DIR/main.swift" \
 
 echo "Compiled: $BINARY"
 
-# Copy app icon if available
-ICON_SRC="$HOME/.claude/bin/assets/AppIcon.icns"
+# Copy app icon
+ICON_SRC="$DIR/assets/AppIcon.icns"
 if [[ -f "$ICON_SRC" ]]; then
   cp "$ICON_SRC" "$APP/Contents/Resources/AppIcon.icns"
   echo "Icon:     $APP/Contents/Resources/AppIcon.icns"
