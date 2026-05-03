@@ -29,11 +29,13 @@ swiftc "$DIR/main.swift" \
 echo "Compiled: $BINARY"
 
 # Copy app icon
-ICON_SRC="$DIR/assets/AppIcon.icns"
-if [[ -f "$ICON_SRC" ]]; then
-  cp "$ICON_SRC" "$APP/Contents/Resources/AppIcon.icns"
-  echo "Icon:     $APP/Contents/Resources/AppIcon.icns"
+ICON_SRC="$DIR/assets/terminal-prompt_v1.icns"
+if [[ ! -f "$ICON_SRC" ]]; then
+  echo "Error: icon not found at $ICON_SRC" >&2
+  exit 1
 fi
+cp "$ICON_SRC" "$APP/Contents/Resources/AppIcon.icns"
+echo "Icon:     $APP/Contents/Resources/AppIcon.icns"
 
 # Ad-hoc sign (required on macOS 26+ for notification permissions)
 codesign --sign - --force --deep "$APP" 2>/dev/null
