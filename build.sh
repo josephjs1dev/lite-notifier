@@ -15,12 +15,16 @@ mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp "$DIR/Info.plist" "$APP/Contents/Info.plist"
 
 # Compile
+SOUND_FLAG=""
+[[ "${LITE_NOTIFIER_SOUND:-0}" == "1" ]] && SOUND_FLAG="-D WITH_SOUND"
+
 swiftc "$DIR/main.swift" \
     -o "$BINARY" \
     -sdk "$(xcrun --show-sdk-path)" \
     -framework AppKit \
     -framework UserNotifications \
-    -O
+    -O \
+    ${SOUND_FLAG:+"$SOUND_FLAG"}
 
 echo "Compiled: $BINARY"
 

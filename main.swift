@@ -18,8 +18,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         }
 
         // Set app icon so it shows correctly in notification header
-        if let iconURL = Bundle.main.url(forResource: "AppIcon", withExtension: "icns"),
-           let icon = NSImage(contentsOf: iconURL) {
+        if let path = arg("--icon"), !path.isEmpty, let icon = NSImage(contentsOfFile: path) {
+            NSApp.applicationIconImage = icon
+        } else if let iconURL = Bundle.main.url(forResource: "AppIcon", withExtension: "icns"),
+                  let icon = NSImage(contentsOf: iconURL) {
             NSApp.applicationIconImage = icon
         }
 
@@ -45,14 +47,24 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         let content = UNMutableNotificationContent()
         content.title = title
         content.body  = message
+        #if WITH_SOUND
         content.sound = .default
+        #endif
         if !activate.isEmpty { content.userInfo = ["activate": activate] }
+        if !iconPath.isEmpty {
+            let tmp = URL(fileURLWithPath: NSTemporaryDirectory())
+                .appendingPathComponent("ln-icon-\(UUID()).\(URL(fileURLWithPath: iconPath).pathExtension)")
+            if (try? FileManager.default.copyItem(atPath: iconPath, toPath: tmp.path)) != nil,
+               let attachment = try? UNNotificationAttachment(identifier: "icon", url: tmp, options: nil) {
+                content.attachments = [attachment]
+            }
+        }
 
         let req = UNNotificationRequest(identifier: "ln-\(UUID())", content: content, trigger: nil)
         center.add(req) { err in
             if let err { fputs("add error: \(err)\n", stderr) }
-            // Stay alive 30s to handle click without needing app relaunch
-            DispatchQueue.main.asyncAfter(deadline: .now() + 30.0) { NSApp.terminate(nil) }
+            let delay: Double = activate.isEmpty ? 0.5 : 30.0
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) { NSApp.terminate(nil) }
         }
     }
 
