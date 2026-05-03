@@ -29,7 +29,7 @@ swiftc "$DIR/main.swift" \
 echo "Compiled: $BINARY"
 
 # Copy app icon
-ICON_SRC="$DIR/assets/terminal-prompt_v1.icns"
+ICON_SRC="$DIR/assets/yang-app-icon-design_v1.icns"
 if [[ ! -f "$ICON_SRC" ]]; then
   echo "Error: icon not found at $ICON_SRC" >&2
   exit 1
