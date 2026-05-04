@@ -30,8 +30,8 @@ echo "Compiled: $BINARY"
 
 # Copy app icon
 # Override default by setting ICON_VARIANT=<name> (without .icns extension).
-# Available variants: yang-app-icon-design_v1, dark_neon_v1, light_gradient_v1, brushed_metal_v1
-ICON_VARIANT="${ICON_VARIANT:-yang-app-icon-design_v1}"
+# Available variants: light_mono_v1, dark_neon_v1, light_gradient_v1, brushed_metal_v1
+ICON_VARIANT="${ICON_VARIANT:-light_mono_v1}"
 ICON_SRC="$DIR/assets/${ICON_VARIANT}.icns"
 if [[ ! -f "$ICON_SRC" ]]; then
   echo "Error: icon variant '${ICON_VARIANT}' not found at $ICON_SRC" >&2
