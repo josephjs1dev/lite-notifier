@@ -28,12 +28,18 @@ swiftc "$DIR/main.swift" \
 
 echo "Compiled: $BINARY"
 
-# Copy app icon if available
-ICON_SRC="$HOME/.claude/bin/assets/AppIcon.icns"
-if [[ -f "$ICON_SRC" ]]; then
-  cp "$ICON_SRC" "$APP/Contents/Resources/AppIcon.icns"
-  echo "Icon:     $APP/Contents/Resources/AppIcon.icns"
+# Copy app icon
+# Override default by setting ICON_VARIANT=<name> (without .icns extension).
+# Available variants: light_mono_v1, dark_neon_v1, light_gradient_v1, brushed_metal_v1
+ICON_VARIANT="${ICON_VARIANT:-light_mono_v1}"
+ICON_SRC="$DIR/assets/${ICON_VARIANT}.icns"
+if [[ ! -f "$ICON_SRC" ]]; then
+  echo "Error: icon variant '${ICON_VARIANT}' not found at $ICON_SRC" >&2
+  echo "Available variants: $(ls "$DIR/assets/"*.icns | xargs -n1 basename | sed 's/\.icns//')" >&2
+  exit 1
 fi
+cp "$ICON_SRC" "$APP/Contents/Resources/AppIcon.icns"
+echo "Icon:     ${ICON_VARIANT} -> $APP/Contents/Resources/AppIcon.icns"
 
 # Ad-hoc sign (required on macOS 26+ for notification permissions)
 codesign --sign - --force --deep "$APP" 2>/dev/null
